@@ -10,10 +10,10 @@ class RiskLevel(enum.Enum):
     CRITICAL = "CRITICAL"
 
 class RiskStatus(enum.Enum):
-    OPEN = "open"
-    IN_PROGRESS = "in_progress"
-    CLOSED = "closed"
-    MITIGATED = "mitigated"
+    OPEN = "OPEN"         # Cambiado de "abierto" a "OPEN"
+    ENPROGRESS = "IN-PROGRESS"  #Cambiado de "inprogress" a "IN-PROGRESS"
+    CIERRA = "CLOSED"      #Cambiado de "cerrado" a "CLOSED"
+    MITIGATED = "MITIGATED"    #Cambiado de "mitigado" un "MITIGATED"
 
 class RiskCategory(Base):
     __tablename__ = "risk_categories"
