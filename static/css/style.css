@@ -1,0 +1,117 @@
+/* Estilos personalizados */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.feature-box {
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+}
+
+.feature-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+/* Badges de niveles de riesgo */
+.risk-badge {
+    font-size: 0.8em;
+    padding: 0.4em 0.8em;
+    border-radius: 15px;
+}
+
+.risk-badge.critical { background: #dc3545; color: white; }
+.risk-badge.high { background: #fd7e14; color: white; }
+.risk-badge.medium { background: #ffc107; color: black; }
+.risk-badge.low { background: #198754; color: white; }
+
+/* Filas de tabla coloreadas */
+.risk-critical { background: #ffebee !important; }
+.risk-high { background: #fff3e0 !important; }
+.risk-medium { background: #fff8e1 !important; }
+.risk-low { background: #e8f5e8 !important; }
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+}
+
+/* Botones */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+    border: none;
+}
+
+/* Formularios */
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    padding: 0.75rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+/* Navbar */
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.navbar-nav .nav-link {
+    font-weight: 500;
+    margin: 0 0.5rem;
+    border-radius: 8px;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    background: rgba(255,255,255,0.2);
+}
+
+/* Tablas */
+.table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9em;
+    letter-spacing: 0.5px;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(102, 126, 234, 0.1) !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero-section .display-4 {
+        font-size: 2rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.9em;
+    }
+}

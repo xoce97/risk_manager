@@ -1,7 +1,14 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Form
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse, RedirectResponse
 from app.database import engine, Base
 from app.routers import risks, categories
+from app import crud, schemas
+from sqlalchemy.orm import Session
+from app.database import get_db
+from fastapi import FastAPI, Request, Form, Depends
 
 app = FastAPI(
     title="Risk Management API",
@@ -9,21 +16,20 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Configurar CORS para Angular
-origins = [
-    "http://localhost:4200",    # Angular dev server
-    "http://127.0.0.1:4200",
-]
-
+# Configurar CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:4200"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# Montar archivos estáticos
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
+# Configurar templates
+templates = Jinja2Templates(directory="templates")
 
 @app.on_event("startup")
 def on_startup():
@@ -31,12 +37,96 @@ def on_startup():
     Base.metadata.create_all(bind=engine)
     print("¡Tablas creadas exitosamente!")
 
+# Incluir routers de API
 app.include_router(risks.router)
 app.include_router(categories.router)
 
-@app.get("/")
-def read_root():
-    return {"message": "Bienvenido al Sistema de Gestión de Riesgos"}
+# Rutas para las vistas HTML
+@app.get("/", response_class=HTMLResponse)
+async def read_root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
+@app.get("/risks", response_class=HTMLResponse)
+async def risks_page(request: Request, db: Session = Depends(get_db)):
+    risks = crud.get_risks(db)
+    return templates.TemplateResponse("risks.html", {"request": request, "risks": risks})
 
+@app.get("/add-risk", response_class=HTMLResponse)
+async def add_risk_page(request: Request, db: Session = Depends(get_db)):
+    categories = crud.get_categories(db)
+    return templates.TemplateResponse("form.html", {"request": request, "categories": categories})
 
+@app.post("/create-risk", response_class=RedirectResponse)
+async def create_risk(
+    request: Request,
+    title: str = Form(...),
+    description: str = Form(...),
+    probability: int = Form(...),
+    impact: int = Form(...),
+    owner: str = Form(...),
+    mitigation_plan: str = Form(""),
+    category_id: int = Form(...),
+    db: Session = Depends(get_db)
+):
+    risk_data = schemas.RiskCreate(
+        title=title,
+        description=description,
+        probability=probability,
+        impact=impact,
+        owner=owner,
+        mitigation_plan=mitigation_plan,
+        category_id=category_id
+    )
+    
+    crud.create_risk(db, risk_data)
+    return RedirectResponse(url="/risks", status_code=303)
+
+@app.get("/categories-manager", response_class=HTMLResponse)
+async def categories_manager(request: Request, db: Session = Depends(get_db)):
+    categories = crud.get_categories(db)
+    return templates.TemplateResponse("categories.html", {"request": request, "categories": categories})
+
+@app.post("/create-category", response_class=RedirectResponse)
+async def create_category(
+    request: Request,
+    name: str = Form(...),
+    description: str = Form(""),
+    db: Session = Depends(get_db)
+):
+    category_data = schemas.RiskCategoryCreate(name=name, description=description)
+    crud.create_category(db, category_data)
+    return RedirectResponse(url="/categories-manager", status_code=303)
+
+def create_default_categories():
+    from app.database import SessionLocal
+    from app import crud, schemas
+    
+    db = SessionLocal()
+    try:
+        # Verificar si ya existen categorías
+        existing_categories = crud.get_categories(db)
+        
+        if not existing_categories:
+            print("Creando categorías por defecto...")
+            
+            default_categories = [
+                {"name": "Tecnológico", "description": "Riesgos relacionados con tecnología y sistemas"},
+                {"name": "Operacional", "description": "Riesgos de operaciones y procesos"},
+                {"name": "Financiero", "description": "Riesgos económicos y financieros"},
+                {"name": "Legal", "description": "Riesgos legales y regulatorios"},
+                {"name": "Recursos Humanos", "description": "Riesgos de personal y talento humano"},
+                {"name": "Seguridad", "description": "Riesgos de seguridad física y lógica"}
+            ]
+            
+            for category_data in default_categories:
+                category = schemas.RiskCategoryCreate(**category_data)
+                crud.create_category(db, category)
+            
+            print("✅ Categorías por defecto creadas exitosamente")
+        else:
+            print(f"✅ Ya existen {len(existing_categories)} categorías")
+            
+    except Exception as e:
+        print(f"❌ Error creando categorías: {e}")
+    finally:
+        db.close()
