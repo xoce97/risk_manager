@@ -1,0 +1,322 @@
+\documentclass[12pt, a4paper, oneside]{article}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+
+\geometry{margin=2.5cm}
+\setlength{\headheight}{15pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+
+% Configuración de colores para código
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+% Configuración de headers y footers
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Sistema de Gestión de Riesgos}
+\lhead{Documentación Técnica}
+\rfoot{Página \thepage}
+
+\title{
+    \vspace{2cm}
+    \textbf{Sistema de Gestión de Riesgos} \\
+    \Large Documentación Técnica Completa
+    \vspace{1cm}
+}
+\author{
+    Departamento de Desarrollo
+}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\begin{abstract}
+Este documento describe el sistema completo de gestión de riesgos desarrollado con FastAPI (backend) y HTML/Bootstrap/JavaScript (frontend). El sistema permite identificar, analizar, evaluar y gestionar riesgos de manera eficiente, con cálculo automático de niveles de riesgo y generación de recomendaciones inteligentes.
+\end{abstract}
+
+\newpage
+\tableofcontents
+\newpage
+
+\section{Introducción}
+
+\subsection{Propósito del Sistema}
+El Sistema de Gestión de Riesgos es una aplicación web diseñada para ayudar a organizaciones en la identificación, análisis y gestión de riesgos.
+
+\subsection{Características Principales}
+\begin{itemize}
+    \item Registro y gestión completa de riesgos
+    \item Cálculo automático de niveles de riesgo
+    \item Generación de recomendaciones inteligentes
+    \item Interfaz web responsive con Bootstrap
+    \item API RESTful completa
+    \item Base de datos SQLite
+\end{itemize}
+
+\subsection{Tecnologías Utilizadas}
+\begin{itemize}
+    \item Backend: Python 3.8+, FastAPI, SQLAlchemy, Pydantic
+    \item Frontend: HTML5, Bootstrap 5, JavaScript, Jinja2
+    \item Base de datos: SQLite
+\end{itemize}
+
+\section{Arquitectura del Sistema}
+
+\subsection{Estructura del Proyecto}
+\begin{verbatim}
+risk_manager/
+  app/
+    main.py
+    database.py
+    models.py
+    schemas.py
+    crud.py
+    routers/
+      risks.py
+      categories.py
+  templates/
+    index.html
+    risks.html
+    form.html
+    risk-detail.html
+    categories.html
+  static/
+    css/style.css
+    js/app.js
+  requirements.txt
+\end{verbatim}
+
+\section{Instalación y Configuración}
+
+\subsection{Requisitos Previos}
+\begin{lstlisting}
+Python 3.8 o superior
+pip (gestor de paquetes de Python)
+\end{lstlisting}
+
+\subsection{Instalación de Dependencias}
+\begin{lstlisting}[language=bash]
+# Crear entorno virtual
+python -m venv .venv
+
+# Activar entorno virtual (Windows)
+.venv\Scripts\activate
+
+# Instalar dependencias
+pip install fastapi uvicorn sqlalchemy
+\end{lstlisting}
+
+\subsection{Ejecución del Sistema}
+\begin{lstlisting}[language=bash]
+uvicorn app.main:app --reload
+\end{lstlisting}
+
+URLs de acceso:
+\begin{itemize}
+    \item Frontend: http://localhost:8000
+    \item API Docs: http://localhost:8000/docs
+\end{itemize}
+
+\section{Modelo de Datos}
+
+\subsection{Tabla: risks}
+\begin{tabular}{|l|l|l|}
+\hline
+Campo & Tipo & Descripción \\
+\hline
+id & INTEGER & Identificador único \\
+title & VARCHAR & Título del riesgo \\
+probability & INTEGER & Probabilidad (1-5) \\
+impact & INTEGER & Impacto (1-5) \\
+risk\_level & ENUM & Nivel calculado \\
+owner & VARCHAR & Responsable \\
+category\_id & INTEGER & ID de categoría \\
+\hline
+\end{tabular}
+
+\subsection{Tabla: risk\_categories}
+\begin{tabular}{|l|l|l|}
+\hline
+Campo & Tipo & Descripción \\
+\hline
+id & INTEGER & Identificador único \\
+name & VARCHAR & Nombre categoría \\
+description & VARCHAR & Descripción \\
+\hline
+\end{tabular}
+
+\section{API Reference}
+
+\subsection{Endpoints de Riesgos}
+
+\subsubsection{GET /risks/}
+Obtiene todos los riesgos registrados.
+
+\subsubsection{POST /risks/}
+Crea un nuevo riesgo.
+
+\subsubsection{PUT /risks/\{id\}}
+Actualiza un riesgo existente.
+
+\subsubsection{DELETE /risks/\{id\}}
+Elimina un riesgo.
+
+\subsection{Endpoints de Categorías}
+
+\subsubsection{GET /categories/}
+Obtiene todas las categorías.
+
+\subsubsection{POST /categories/}
+Crea una nueva categoría.
+
+\section{Frontend y Plantillas}
+
+\subsection{Plantillas HTML}
+\begin{itemize}
+    \item index.html - Página principal
+    \item risks.html - Lista de riesgos
+    \item form.html - Formulario de riesgo
+    \item risk-detail.html - Detalle con recomendaciones
+    \item categories.html - Gestión de categorías
+\end{itemize}
+
+\subsection{URLs de Vistas}
+\begin{itemize}
+    \item http://localhost:8000/ - Dashboard
+    \item http://localhost:8000/risks - Lista de riesgos
+    \item http://localhost:8000/add-risk - Formulario
+    \item http://localhost:8000/risk/1 - Detalle
+    \item http://localhost:8000/categories-manager - Categorías
+\end{itemize}
+
+\section{Flujo de Trabajo}
+
+\subsection{Registro de Nuevo Riesgo}
+\begin{enumerate}
+    \item Acceder a /add-risk
+    \item Completar formulario
+    \item Sistema calcula nivel de riesgo
+    \item Se generan recomendaciones
+    \item Riesgo se guarda en BD
+    \item Redirección a lista de riesgos
+\end{enumerate}
+
+\subsection{Proceso de Análisis}
+\begin{enumerate}
+    \item Entrada: Probabilidad e Impacto
+    \item Cálculo: Puntuación = Probabilidad × Impacto
+    \item Clasificación:
+    \begin{itemize}
+        \item 1-4: LOW (Bajo)
+        \item 5-10: MEDIUM (Medio)
+        \item 11-20: HIGH (Alto)
+        \item 21-25: CRITICAL (Crítico)
+    \end{itemize}
+    \item Salida: Recomendaciones por nivel
+\end{enumerate}
+
+\section{Manual de Usuario}
+
+\subsection{Primeros Pasos}
+\begin{enumerate}
+    \item Crear categorías en /categories-manager
+    \item Agregar riesgo en /add-risk
+    \item Ver lista en /risks
+\end{enumerate}
+
+\subsection{Gestión de Riesgos}
+\begin{itemize}
+    \item Filtrar por nivel de riesgo
+    \item Buscar por título o descripción
+    \item Ordenar por probabilidad/impacto
+\end{itemize}
+
+\subsection{Acciones Disponibles}
+\begin{itemize}
+    \item Ver - Detalle completo con recomendaciones
+    \item Editar - Modificar información
+    \item Eliminar - Remover riesgo
+    \item Imprimir - Generar reporte
+\end{itemize}
+
+\section{Mantenimiento y Soporte}
+
+\subsection{Backups de Base de Datos}
+\begin{lstlisting}[language=bash]
+cp risk_management.db risk_management_backup.db
+\end{lstlisting}
+
+\subsection{Monitoreo del Sistema}
+\begin{itemize}
+    \item Verificar logs de la aplicación
+    \item Monitorear uso de memoria
+    \item Revisar espacio en disco
+\end{itemize}
+
+\section{Guía de Resolución de Problemas}
+
+\subsection{Error: Tablas no existentes}
+\begin{itemize}
+    \item Causa: Tablas no creadas en la base de datos
+    \item Solución: Ejecutar creación de tablas
+\end{itemize}
+
+\subsection{Error: Configuración CORS}
+\begin{itemize}
+    \item Causa: Configuración incorrecta de CORS
+    \item Solución: Verificar origins en middleware
+\end{itemize}
+
+\subsection{Error: Categoría requerida}
+\begin{itemize}
+    \item Causa: No hay categorías creadas
+    \item Solución: Crear categorías primero
+\end{itemize}
+
+\section{Plan de Futuro}
+
+\subsection{Mejoras Planeadas}
+\begin{itemize}
+    \item Sistema de autenticación
+    \item Notificaciones por email
+    \item Reportes PDF automáticos
+    \item API para integraciones
+    \item Dashboard con gráficos
+\end{itemize}
+
+\end{document}
