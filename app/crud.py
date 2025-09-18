@@ -187,6 +187,8 @@ PRÓXIMOS PASOS SUGERIDOS:
 
     return detailed_recommendations
 
+
+
 # CRUD operations for Risk
 def create_risk(db: Session, risk: schemas.RiskCreate):
     risk_level = calculate_risk_level(risk.probability, risk.impact)
@@ -286,6 +288,23 @@ def update_risk_recommendations(db: Session, risk_id: int, custom_recommendation
     db.commit()
     db.refresh(db_risk)
     return db_risk
+
+def risk_to_dict(risk):
+    """Convierte un objeto Risk a diccionario para templates"""
+    return {
+        "id": risk.id,
+        "title": risk.title,
+        "description": risk.description,
+        "probability": risk.probability,
+        "impact": risk.impact,
+        "risk_level": risk.risk_level.value if risk.risk_level else "UNKNOWN",
+        "status": risk.status.value if risk.status else "UNKNOWN",
+        "owner": risk.owner,
+        "mitigation_plan": risk.mitigation_plan,
+        "recommendations": risk.recommendations,
+        "category_id": risk.category_id,
+        "created_at": risk.created_at.strftime('%d/%m/%Y %H:%M') if risk.created_at else "N/A"
+    }
 
 # CRUD operations for RiskCategory
 def create_category(db: Session, category: schemas.RiskCategoryCreate):

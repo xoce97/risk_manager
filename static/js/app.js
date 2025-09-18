@@ -34,15 +34,44 @@ async function deleteRisk(id) {
     }
 }
 
+
 // Función para ver riesgo
 function viewRisk(id) {
-    window.location.href = `/risks/${id}`;
+    window.location.href = `/risk/${id}`;
 }
 
 // Función para editar riesgo
 function editRisk(id) {
-    // Implementar edición si es necesario
-    alert('Funcionalidad de edición en desarrollo');
+    // Por ahora redirigimos al formulario de agregar
+    // Puedes implementar edición después
+    alert('Funcionalidad de edición en desarrollo. Redirigiendo a crear nuevo riesgo.');
+    window.location.href = '/add-risk';
+}
+
+// Función para eliminar riesgo
+async function deleteRisk(id) {
+    if (confirm('¿Estás seguro de que quieres eliminar este riesgo?')) {
+        try {
+            const response = await fetch(`/risks/${id}`, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                alert('Riesgo eliminado correctamente');
+                // Si estamos en la página de detalle, volver a la lista
+                if (window.location.pathname.includes('/risk/')) {
+                    window.location.href = '/risks';
+                } else {
+                    location.reload();
+                }
+            } else {
+                alert('Error al eliminar el riesgo');
+            }
+        } catch (error) {
+            console.error('Error deleting risk:', error);
+            alert('Error al eliminar el riesgo');
+        }
+    }
 }
 
 // Preview del riesgo en tiempo real

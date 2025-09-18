@@ -18,6 +18,7 @@
                 <a class="nav-link" href="/">Inicio</a>
                 <a class="nav-link" href="/risks">Ver Riesgos</a>
                 <a class="nav-link active" href="/add-risk">Agregar Riesgo</a>
+                <a class="nav-link" href="/categories-manager">Categorías</a>
             </div>
         </div>
     </nav>
@@ -74,10 +75,22 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Categoría *</label>
                                     <select class="form-select" name="category_id" required>
-                                        {% for category in categories %}
-                                        <option value="{{ category.id }}">{{ category.name }}</option>
-                                        {% endfor %}
+                                        {% if categories %}
+                                            {% for category in categories %}
+                                            <option value="{{ category.id }}">{{ category.name }}</option>
+                                            {% endfor %}
+                                        {% else %}
+                                            <option value="" disabled selected>No hay categorías disponibles</option>
+                                        {% endif %}
                                     </select>
+                                    {% if not categories %}
+                                    <div class="alert alert-warning mt-2">
+                                        <small>
+                                            <i class="fas fa-exclamation-triangle me-1"></i>
+                                            No hay categorías disponibles. Por favor crea categorías primero desde la API.
+                                        </small>
+                                    </div>
+                                    {% endif %}
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Estado</label>

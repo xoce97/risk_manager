@@ -2,6 +2,10 @@ from sqlalchemy import Column, Integer, String, Float, Enum, ForeignKey
 from sqlalchemy.orm import relationship
 from app.database import Base  # Importar Base desde database.py
 import enum
+from sqlalchemy import Column, Integer, String, Float, Enum, ForeignKey, DateTime
+from sqlalchemy.sql import func
+import enum
+
 
 class RiskLevel(enum.Enum):
     LOW = "LOW"
@@ -36,7 +40,9 @@ class Risk(Base):
     status = Column(Enum(RiskStatus), default=RiskStatus.OPEN)
     owner = Column(String(100))
     mitigation_plan = Column(String(1000))
-    recommendations = Column(String(1000))  # ← Nuevo campo para recomendaciones
+    recommendations = Column(String(1000))
+    created_at = Column(DateTime(timezone=True), server_default=func.now())  # ← NUEVO CAMPO
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())        # ← OPCIONAL
     
     category_id = Column(Integer, ForeignKey("risk_categories.id"))
     category = relationship("RiskCategory", back_populates="risks")

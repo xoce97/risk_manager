@@ -105,6 +105,79 @@ body {
     background-color: rgba(102, 126, 234, 0.1) !important;
 }
 
+.risk-badge.unknown {
+    background: #6c757d;
+    color: white;
+}
+
+.risk-unknown {
+    background: #f8f9fa !important;
+}
+
+/* Estilos para la página de detalle */
+.large-badge {
+    font-size: 1.1em;
+    padding: 0.6em 1em;
+}
+
+.metric-box {
+    padding: 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    background: white;
+}
+
+.metric-box h3 {
+    margin: 0;
+    color: #495057;
+    font-weight: bold;
+}
+
+.metric-box small {
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.recommendations .alert,
+.mitigation-plan .alert {
+    border-left: 4px solid;
+    border-radius: 8px;
+}
+
+.recommendations .alert {
+    border-left-color: #17a2b8;
+}
+
+.mitigation-plan .alert {
+    border-left-color: #28a745;
+}
+
+.metadata-item {
+    margin: 0.5rem 0;
+}
+
+.metadata-item strong {
+    color: #495057;
+}
+
+/* Estilos para impresión */
+@media print {
+    .navbar, .btn {
+        display: none !important;
+    }
+    
+    .card {
+        border: 1px solid #000 !important;
+        box-shadow: none !important;
+    }
+    
+    .risk-badge {
+        border: 1px solid #000 !important;
+        color: #000 !important;
+        background: white !important;
+    }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .hero-section .display-4 {

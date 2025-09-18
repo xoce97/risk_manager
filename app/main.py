@@ -37,6 +37,8 @@ def on_startup():
     Base.metadata.create_all(bind=engine)
     print("¡Tablas creadas exitosamente!")
 
+
+
 # Incluir routers de API
 app.include_router(risks.router)
 app.include_router(categories.router)
@@ -49,7 +51,19 @@ async def read_root(request: Request):
 @app.get("/risks", response_class=HTMLResponse)
 async def risks_page(request: Request, db: Session = Depends(get_db)):
     risks = crud.get_risks(db)
-    return templates.TemplateResponse("risks.html", {"request": request, "risks": risks})
+    risks_list = [crud.risk_to_dict(risk) for risk in risks]
+    return templates.TemplateResponse("risks.html", {"request": request, "risks": risks_list})
+
+@app.get("/risk/{risk_id}", response_class=HTMLResponse)
+async def risk_detail_page(request: Request, risk_id: int, db: Session = Depends(get_db)):
+    risk = crud.get_risk(db, risk_id)
+    if not risk:
+        return RedirectResponse(url="/risks")
+    
+    return templates.TemplateResponse("risk-detail.html", {
+        "request": request,
+        "risk": crud.risk_to_dict(risk)
+    })
 
 @app.get("/add-risk", response_class=HTMLResponse)
 async def add_risk_page(request: Request, db: Session = Depends(get_db)):
@@ -80,6 +94,89 @@ async def create_risk(
     
     crud.create_risk(db, risk_data)
     return RedirectResponse(url="/risks", status_code=303)
+
+@app.get("/risk/{risk_id}", response_class=HTMLResponse)
+async def risk_detail_page(request: Request, risk_id: int, db: Session = Depends(get_db)):
+    risk = crud.get_risk(db, risk_id)
+    if not risk:
+        return RedirectResponse(url="/risks")
+    
+    # Convertir enums a strings para el template
+    risk_dict = {
+        "id": risk.id,
+        "title": risk.title,
+        "description": risk.description,
+        "probability": risk.probability,
+        "impact": risk.impact,
+        "risk_level": risk.risk_level,
+        "status": risk.status,
+        "owner": risk.owner,
+        "mitigation_plan": risk.mitigation_plan,
+        "recommendations": risk.recommendations,
+        "category_id": risk.category_id,
+        "created_at": risk.created_at
+    }
+    
+    return templates.TemplateResponse("risk-detail.html", {
+        "request": request,
+        "risk": risk_dict
+    })
+
+
+# Rutas para las vistas HTML
+@app.get("/", response_class=HTMLResponse)
+async def read_root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+@app.get("/risks", response_class=HTMLResponse)
+async def risks_page(request: Request, db: Session = Depends(get_db)):
+    risks = crud.get_risks(db)
+    # Convertir riesgos a diccionarios para Jinja2
+    risks_list = []
+    for risk in risks:
+        risk_dict = {
+            "id": risk.id,
+            "title": risk.title,
+            "description": risk.description,
+            "probability": risk.probability,
+            "impact": risk.impact,
+            "risk_level": risk.risk_level.value if risk.risk_level else "UNKNOWN",
+            "status": risk.status.value if risk.status else "UNKNOWN",
+            "owner": risk.owner,
+            "mitigation_plan": risk.mitigation_plan,
+            "recommendations": risk.recommendations,
+            "category_id": risk.category_id,
+            "created_at": risk.created_at
+        }
+        risks_list.append(risk_dict)
+    return templates.TemplateResponse("risks.html", {"request": request, "risks": risks_list})
+
+@app.get("/risk/{risk_id}", response_class=HTMLResponse)
+async def risk_detail_page(request: Request, risk_id: int, db: Session = Depends(get_db)):
+    risk = crud.get_risk(db, risk_id)
+    if not risk:
+        return RedirectResponse(url="/risks")
+    
+    # Convertir a diccionario para el template
+    risk_dict = {
+        "id": risk.id,
+        "title": risk.title,
+        "description": risk.description,
+        "probability": risk.probability,
+        "impact": risk.impact,
+        "risk_level": risk.risk_level,
+        "status": risk.status,
+        "owner": risk.owner,
+        "mitigation_plan": risk.mitigation_plan,
+        "recommendations": risk.recommendations,
+        "category_id": risk.category_id,
+        "created_at": risk.created_at
+    }
+    
+    return templates.TemplateResponse("risk-detail.html", {
+        "request": request,
+        "risk": risk_dict
+    })
 
 @app.get("/categories-manager", response_class=HTMLResponse)
 async def categories_manager(request: Request, db: Session = Depends(get_db)):
